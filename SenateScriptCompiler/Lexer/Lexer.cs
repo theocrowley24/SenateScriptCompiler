@@ -137,7 +137,8 @@ namespace SenateScriptCompiler
             {
                 string variableName = "";
 
-                while (_expression[_index].ToString() !=  " " && _expression[_index].ToString() != ";")
+                //Add token blacklist e.g. +, ), (
+                while (_expression[_index].ToString() !=  " " && _expression[_index].ToString() != ";" && _expression[_index] != ')')
                 {
                     variableName += _expression[_index];
                     _index++;
