@@ -6,6 +6,7 @@ namespace SenateScriptCompiler
 {
     enum Token
     {
+        Illegal,
         Print,
         Semi,
         String,

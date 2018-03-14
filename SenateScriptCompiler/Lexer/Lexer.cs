@@ -17,7 +17,6 @@ namespace SenateScriptCompiler
 
         protected String StringValue;
         protected Double NumberValue;
-        protected Boolean BoolValue;
         protected String VariableName;
 
         private readonly Dictionary<Token, String> _tokenValues;

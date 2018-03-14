@@ -22,6 +22,7 @@ namespace SenateScriptCompiler
         {
             DateTime startTime = DateTime.Now;
 
+            //Executes every statement in sequence
             foreach (Statement statement in _statements)
             {
                 statement.Execute();
@@ -35,6 +36,7 @@ namespace SenateScriptCompiler
         {
             DateTime startTime = DateTime.Now;
 
+            //Loops until it reaches the end of the file
             while (CurrentToken != Token.EndFile)
             {
                 GetNextToken();
@@ -113,21 +115,9 @@ namespace SenateScriptCompiler
                     {
                         GetNextToken();
 
-                        if (CurrentToken == Token.String || CurrentToken == Token.Number || CurrentToken == Token.BoolTrue || CurrentToken == Token.BoolFalse)
+                        if (CurrentToken == Token.String || CurrentToken == Token.Number || CurrentToken == Token.BoolTrue || CurrentToken == Token.BoolFalse || CurrentToken == Token.Not || CurrentToken == Token.VariableName)
                         {
-                            if (CurrentToken == Token.String)
-                            {
-                                _statements.Add(new VariableAssignmentStatement(VariableName, EvaluateExpression()));
-                            } else if (CurrentToken == Token.Number)
-                            {
-                                _statements.Add(new VariableAssignmentStatement(VariableName, EvaluateExpression()));
-                            } else if (CurrentToken == Token.BoolTrue)
-                            {
-                                _statements.Add(new VariableAssignmentStatement(VariableName, EvaluateExpression()));
-                            } else if (CurrentToken == Token.BoolFalse)
-                            {
-                                _statements.Add(new VariableAssignmentStatement(VariableName, EvaluateExpression()));
-                            }
+                            _statements.Add(new VariableAssignmentStatement(VariableName, EvaluateExpression()));
                         }
                         else
                         {
@@ -138,6 +128,11 @@ namespace SenateScriptCompiler
                     {
                         throw new Exception("Missing = after variable name");
                     }
+                }
+
+                if (CurrentToken == Token.VariableName && (LastToken != Token.BoolVariable || LastToken != Token.StringVariable || LastToken != Token.NumberVariable))
+                {
+                    throw new Exception("Variable does not exists in scope");
                 }
 
             }
