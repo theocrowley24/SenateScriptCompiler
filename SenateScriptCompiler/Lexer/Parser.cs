@@ -78,21 +78,21 @@ namespace SenateScriptCompiler
                         {
                             GetNextToken();
 
-                            if (CurrentToken == Token.String)
+                            if (CurrentToken == Token.String || CurrentToken == Token.Number || CurrentToken == Token.BoolFalse || CurrentToken == Token.BoolTrue || CurrentToken == Token.Minus)
                             {
-                                _statements.Add(new VariableDeclerationStatement(VariableName, EvaluateExpression()));
-                            } else if (CurrentToken == Token.Number)
-                            {
-                                _statements.Add(new VariableDeclerationStatement(VariableName, EvaluateExpression()));
-                            } else if (CurrentToken == Token.BoolFalse)
-                            {
-                                _statements.Add(new VariableDeclerationStatement(VariableName, EvaluateExpression()));
-                            } else if (CurrentToken == Token.BoolTrue)
-                            {
-                                _statements.Add(new VariableDeclerationStatement(VariableName, EvaluateExpression()));
-                            } else if (CurrentToken == Token.Minus)
-                            {
-                                _statements.Add(new VariableDeclerationStatement(VariableName, EvaluateExpression()));
+                                //Finds the type of variable which is being declared
+                                Enums.Type type = Enums.Type.Null;
+
+                                Dictionary<Token, Enums.Type> tokenConversion = new Dictionary<Token, Enums.Type>
+                                {
+                                    { Token.StringVariable, Enums.Type.String },
+                                    { Token.NumberVariable, Enums.Type.Number },
+                                    { Token.BoolVariable, Enums.Type.Bool }
+                                };
+
+                                type = tokenConversion[ThirdLastToken];
+
+                                _statements.Add(new VariableDeclerationStatement(type, VariableName, EvaluateExpression()));
                             }
                             else
                             {
@@ -154,21 +154,15 @@ namespace SenateScriptCompiler
 
                 Expression expression = EvaluateExpression();
 
-                switch (token)
+                Dictionary<Token, Operator> tokenConversion = new Dictionary<Token, Operator>
                 {
-                    case Token.Plus:
-                        retValue = new BinaryExpression(retValue, expression, Operator.Plus);
-                        break;
-                    case Token.Minus:
-                        retValue = new BinaryExpression(retValue, expression, Operator.Minus);
-                        break;
-                    case Token.Or:
-                        retValue = new BinaryExpression(retValue, expression, Operator.Or);
-                        break;
-                    case Token.And:
-                        retValue = new BinaryExpression(retValue, expression, Operator.And);
-                        break;
-                }
+                    { Token.Plus, Operator.Plus },
+                    { Token.Minus, Operator.Minus },
+                    { Token.Or, Operator.Or },
+                    { Token.And, Operator.And },
+                };
+
+                retValue = new BinaryExpression(retValue, expression, tokenConversion[token]);
             }
 
             return retValue;

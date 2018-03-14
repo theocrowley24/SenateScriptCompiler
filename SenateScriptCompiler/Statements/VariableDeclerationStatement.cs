@@ -10,10 +10,14 @@ namespace SenateScriptCompiler.Statements
         private readonly Symbol _symbol;
         private readonly String _variableName;
 
-        public VariableDeclerationStatement(string variableName, Expression value)
+        public VariableDeclerationStatement(Enums.Type type, string variableName, Expression value)
         {
+
             _symbol = value.Evaluate();
             _variableName = variableName;
+
+            if (_symbol.Type != type)
+                throw new Exception("Cannot declare type " + _symbol.Type.ToString() + " as " + type);
         }
 
         public override bool Execute()

@@ -8,6 +8,7 @@ namespace SenateScriptCompiler.Enums
     {
         String,
         Number,
-        Bool
+        Bool,
+        Null
     }
 }

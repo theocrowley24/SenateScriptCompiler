@@ -14,6 +14,8 @@ namespace SenateScriptCompiler
 
         protected Token CurrentToken;
         protected Token LastToken;
+        protected Token SecondLastToken;
+        protected Token ThirdLastToken;
 
         protected String StringValue;
         protected Double NumberValue;
@@ -43,7 +45,8 @@ namespace SenateScriptCompiler
 
         public void GetNextToken()
         {
-            
+            ThirdLastToken = SecondLastToken;
+            SecondLastToken = LastToken;
             LastToken = CurrentToken;
 
             //Skips whitespace in expression
@@ -130,21 +133,20 @@ namespace SenateScriptCompiler
             }
 
             //Checks if current index of expression is start of variable name
-            if (LexerHelper.IsStartOfVariableName(_expression[_index]))
+            if (_expression[_index] == '$')
             {
                 string variableName = "";
 
-                while (LexerHelper.IsStartOfVariableName(_expression[_index]))
+                while (_expression[_index].ToString() !=  " " && _expression[_index].ToString() != ";")
                 {
                     variableName += _expression[_index];
                     _index++;
                 }
-                
+
                 CurrentToken = Token.VariableName;
                 VariableName = variableName;
 
                 return;
-
             }
 
             if (_expression[_index] == '=')
