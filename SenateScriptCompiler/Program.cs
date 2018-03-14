@@ -7,13 +7,17 @@ namespace SenateScriptCompiler
     {
         static void Main(string[] args)
         {
-            Parser parser = new Parser("NUMBER x = 5;" + 
-                                       "NUMBER y = 10;" +
-                                       "PRINT x+y;" +
-                                       "x = 10;");
+
+            String code = System.IO.File.ReadAllText(@"C:\Users\Theo\Desktop\SenateTestCode.txt");
+           
+            Console.WriteLine("<---- CODE TO COMPILE ---->\n");
+            Console.WriteLine(code);
+            Console.WriteLine("<------------------------->\n");
+
+            Parser parser = new Parser(code);
 
             parser.Parse();
-            parser.Run();  
+            parser.Run();
         }
     }
 }

@@ -23,9 +23,5 @@ namespace SenateScriptCompiler.Expressions
             return _symbol;
         }
 
-        public override void SetSymbol(Symbol symbol)
-        {
-            _symbol = symbol;
-        }
     }
 }

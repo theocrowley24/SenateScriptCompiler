@@ -18,31 +18,28 @@ namespace SenateScriptCompiler.Expressions
 
         public override Symbol Evaluate()
         {
-            if (_expression.Evaluate().Type != Enums.Type.Number)
-                throw new Exception("Incorrect type");
-
             switch (_operator)
             {
                 case Operator.Plus:
+                    if (_expression.Evaluate().Type != Enums.Type.Number)
+                        throw new Exception("Incorrect type");
                     return _expression.Evaluate();
-                //Probably won't work
-                //Yeah it doesn't work
-                /*
                 case Operator.Minus:
-                    Symbol symbol = new Symbol();
-                    symbol.Type = Enums.Type.Number;
-                    symbol.NumberValue = _expression.Evaluate().NumberValue * -1;
-                    _expression.SetSymbol(symbol);
-                    return _expression.Evaluate();
-                */
+                    if (_expression.Evaluate().Type != Enums.Type.Number)
+                        throw new Exception("Incorrect type");
+                    Symbol symbolMinus = _expression.Evaluate();
+                    symbolMinus.Minus();
+                    return symbolMinus;
+                case Operator.Not:
+                    if (_expression.Evaluate().Type != Enums.Type.Bool)
+                        throw new Exception("Incorrect type");
+                    Symbol symbolNot = _expression.Evaluate();
+                    symbolNot.Not();
+                    return symbolNot;
+
             }
 
             return null;
-        }
-
-        public override void SetSymbol(Symbol symbol)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -18,9 +18,5 @@ namespace SenateScriptCompiler.Expressions
             return SymbolTable.Get(_variableName);
         }
 
-        public override void SetSymbol(Symbol symbol)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,26 +7,35 @@ namespace SenateScriptCompiler
 {
     static class SymbolTable
     {
-        static private Dictionary<string, Symbol> table;
+        private static Hashtable table;
 
         static SymbolTable()
         {
-            table = new Dictionary<string, Symbol>();
+            table = new Hashtable();
         }
 
-        static public bool Add(string variableName, Symbol symbol)
+        public static bool Add(string variableName, Symbol symbol)
         {
+            if (table.ContainsKey(variableName))
+                throw new Exception("Variable already exists!");
+
             table.Add(variableName, symbol);
             return true;
         }
 
-        static public Symbol Get(string variableName)
+        public static Symbol Get(string variableName)
         {
-            return table[variableName];
+            if (!table.ContainsKey(variableName))
+                throw new Exception("Variable does not exist in current context!");
+
+            return table[variableName] as Symbol;
         }
 
-        static public bool Assign(string variableName, Symbol symbol)
+        public static bool Assign(string variableName, Symbol symbol)
         {
+            if (!table.ContainsKey(variableName))
+                throw new Exception("Variable does not exist in current context!");
+
             table[variableName] = symbol;
             return true;
         }

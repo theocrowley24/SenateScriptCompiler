@@ -20,28 +20,39 @@ namespace SenateScriptCompiler
 
         public void Run()
         {
+            DateTime startTime = DateTime.Now;
+
             foreach (Statement statement in _statements)
             {
                 statement.Execute();
             }
+
+            Console.WriteLine();
+            Console.WriteLine("Time taken to execute: " + (DateTime.Now - startTime));
         }
 
         public bool Parse()
         {
+            DateTime startTime = DateTime.Now;
+
             while (CurrentToken != Token.EndFile)
             {
                 GetNextToken();
 
-                //Checks for a print statement
 
+                //Array containing all accepted tokens by the print statement
                 Token[] acceptedPrintTokens = new[]
                 {
                     Token.String,
-                    Token.Bool,
+                    Token.BoolTrue,
+                    Token.BoolFalse,
                     Token.Number,
-                    Token.VariableName
+                    Token.VariableName,
+                    Token.Not,
+                    Token.Minus
                 };
 
+                //PRINT statement check/parse
                 if (LastToken == Token.Print && LastToken != CurrentToken && acceptedPrintTokens.Contains(CurrentToken))
                 {
                     _statements.Add(new PrintStatement(EvaluateExpression()));
@@ -53,7 +64,7 @@ namespace SenateScriptCompiler
                 }
 
                 //Checks for variable decleration
-                if (CurrentToken == Token.NumberVariable || CurrentToken == Token.StringVariable)
+                if (CurrentToken == Token.NumberVariable || CurrentToken == Token.StringVariable || CurrentToken == Token.BoolVariable)
                 {
                     GetNextToken();
 
@@ -71,6 +82,15 @@ namespace SenateScriptCompiler
                             } else if (CurrentToken == Token.Number)
                             {
                                 _statements.Add(new VariableDeclerationStatement(VariableName, EvaluateExpression()));
+                            } else if (CurrentToken == Token.BoolFalse)
+                            {
+                                _statements.Add(new VariableDeclerationStatement(VariableName, EvaluateExpression()));
+                            } else if (CurrentToken == Token.BoolTrue)
+                            {
+                                _statements.Add(new VariableDeclerationStatement(VariableName, EvaluateExpression()));
+                            } else if (CurrentToken == Token.Minus)
+                            {
+                                _statements.Add(new VariableDeclerationStatement(VariableName, EvaluateExpression()));
                             }
                             else
                             {
@@ -85,7 +105,7 @@ namespace SenateScriptCompiler
                 }
 
                 //Checks for variable assignment
-                if (CurrentToken == Token.VariableName)
+                if (CurrentToken == Token.VariableName && LastToken == Token.Semi)
                 {
                     GetNextToken();
 
@@ -93,12 +113,18 @@ namespace SenateScriptCompiler
                     {
                         GetNextToken();
 
-                        if (CurrentToken == Token.String || CurrentToken == Token.Number || CurrentToken == Token.Bool)
+                        if (CurrentToken == Token.String || CurrentToken == Token.Number || CurrentToken == Token.BoolTrue || CurrentToken == Token.BoolFalse)
                         {
                             if (CurrentToken == Token.String)
                             {
                                 _statements.Add(new VariableAssignmentStatement(VariableName, EvaluateExpression()));
                             } else if (CurrentToken == Token.Number)
+                            {
+                                _statements.Add(new VariableAssignmentStatement(VariableName, EvaluateExpression()));
+                            } else if (CurrentToken == Token.BoolTrue)
+                            {
+                                _statements.Add(new VariableAssignmentStatement(VariableName, EvaluateExpression()));
+                            } else if (CurrentToken == Token.BoolFalse)
                             {
                                 _statements.Add(new VariableAssignmentStatement(VariableName, EvaluateExpression()));
                             }
@@ -116,6 +142,7 @@ namespace SenateScriptCompiler
 
             }
 
+            Console.WriteLine("Time taken to compile: " + (DateTime.Now - startTime) + "\n");
             return true;
         }
 
@@ -124,14 +151,29 @@ namespace SenateScriptCompiler
 
             Expression retValue = EvaluateTerm();
 
-            while (CurrentToken == Token.Plus || CurrentToken == Token.Minus)
+            while (CurrentToken == Token.Plus || CurrentToken == Token.Minus || CurrentToken == Token.Or || CurrentToken == Token.And)
             {
                 GetNextToken();
 
                 var token = LastToken;
 
                 Expression expression = EvaluateExpression();
-                retValue = new BinaryExpression(retValue, expression, token == Token.Plus ? Operator.Plus : Operator.Minus);
+
+                switch (token)
+                {
+                    case Token.Plus:
+                        retValue = new BinaryExpression(retValue, expression, Operator.Plus);
+                        break;
+                    case Token.Minus:
+                        retValue = new BinaryExpression(retValue, expression, Operator.Minus);
+                        break;
+                    case Token.Or:
+                        retValue = new BinaryExpression(retValue, expression, Operator.Or);
+                        break;
+                    case Token.And:
+                        retValue = new BinaryExpression(retValue, expression, Operator.And);
+                        break;
+                }
             }
 
             return retValue;
@@ -189,6 +231,20 @@ namespace SenateScriptCompiler
             {
                 retValue = new VariableExpression(VariableName);
                 GetNextToken();
+            } else if (CurrentToken == Token.BoolTrue)
+            {
+                retValue = new BoolExpression(true);
+                GetNextToken();
+            } else if (CurrentToken == Token.BoolFalse)
+            {
+                retValue = new BoolExpression(false);
+                GetNextToken();
+            } else if (CurrentToken == Token.Not)
+            {
+                GetNextToken();
+                retValue = EvaluateFactor();
+
+                retValue = new UnaryExpression(retValue, Operator.Not);
             }
             else
             {

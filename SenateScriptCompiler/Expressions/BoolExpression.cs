@@ -4,22 +4,24 @@ using System.Text;
 
 namespace SenateScriptCompiler.Expressions
 {
-    class StringExpression : Expression
+    class BoolExpression : Expression
     {
-        private readonly Symbol _symbol;
 
-        public StringExpression(string value)
+        private Symbol _symbol;
+
+        public BoolExpression(bool value)
         {
             _symbol = new Symbol
             {
-                Type = Enums.Type.String,
-                StringValue = value
+                Type = Enums.Type.Bool,
+                BoolValue = value
             };
         }
 
-        public override Symbol  Evaluate()
+        public override Symbol Evaluate()
         {
             return _symbol;
         }
+
     }
 }

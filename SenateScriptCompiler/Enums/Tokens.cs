@@ -10,7 +10,8 @@ namespace SenateScriptCompiler
         Semi,
         String,
         Number,
-        Bool,
+        BoolTrue,
+        BoolFalse,
         EndFile,
         Plus,
         Minus,
@@ -22,6 +23,9 @@ namespace SenateScriptCompiler
         NumberVariable,
         StringVariable,
         BoolVariable,
-        VariableName
+        VariableName,
+        And,
+        Or,
+        Not
     }
 }

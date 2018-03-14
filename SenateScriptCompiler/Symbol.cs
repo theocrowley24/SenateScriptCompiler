@@ -10,5 +10,15 @@ namespace SenateScriptCompiler
         public String StringValue;
         public Double NumberValue;
         public Boolean BoolValue;
+
+        public void Not()
+        {
+            BoolValue = !BoolValue;
+        }
+
+        public void Minus()
+        {
+            NumberValue *= -1;
+        }
     }
 }

@@ -82,14 +82,35 @@ namespace SenateScriptCompiler.Expressions
 
                     return symbol;
 
+                case Operator.And:
+                    if (_expression1.Evaluate().Type == Type.Bool)
+                    {
+                        symbol.Type = Type.Bool;
+                        symbol.BoolValue = _expression1.Evaluate().BoolValue && _expression2.Evaluate().BoolValue;
+                    }
+                    else
+                    {
+                        throw new Exception("Incorrect type");
+                    }
+
+                    return symbol;
+                case Operator.Or:
+                    if (_expression1.Evaluate().Type == Type.Bool)
+                    {
+                        symbol.Type = Type.Bool;
+                        symbol.BoolValue = _expression1.Evaluate().BoolValue || _expression2.Evaluate().BoolValue;
+                    }
+                    else
+                    {
+                        throw new Exception("Incorrect type");
+                    }
+
+                    return symbol;
+
             }
 
             return null;
         }
 
-        public override void SetSymbol(Symbol symbol)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -44,5 +44,10 @@ namespace SenateScriptCompiler.Helpers
 
             return variableCharacters.Contains(c);
         }
+
+        public static bool IsStartOfBool(char c)
+        {
+            return c == 'T' || c == 'F';
+        }
     }
 }

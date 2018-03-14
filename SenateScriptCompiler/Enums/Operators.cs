@@ -9,6 +9,9 @@ namespace SenateScriptCompiler.Enums
         Plus,
         Minus,
         Multiply,
-        Divide
+        Divide,
+        And,
+        Or,
+        Not
     }
 }

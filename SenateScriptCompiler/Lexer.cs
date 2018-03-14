@@ -34,7 +34,11 @@ namespace SenateScriptCompiler
                 { Token.Semi, ";" },
                 { Token.NumberVariable, "NUMBER" },
                 { Token.BoolVariable, "BOOL" },
-                { Token.StringVariable, "STRING" }
+                { Token.StringVariable, "STRING" },
+                { Token.BoolTrue, "TRUE" },
+                { Token.BoolFalse, "FALSE" },
+                { Token.And, "AND" },
+                { Token.Or, "OR" }
             };
         }
 
@@ -44,7 +48,7 @@ namespace SenateScriptCompiler
             LastToken = CurrentToken;
 
             //Skips whitespace in expression
-            while (_index < _length && (_expression[_index].ToString() == " " || _expression[_index] == '\t'))
+            while (_index < _length && (_expression[_index].ToString() == " " || _expression[_index] == '\t' || _expression[_index] == '\r' || _expression[_index] == '\n'))
             {
                 _index++;
             }
@@ -60,7 +64,7 @@ namespace SenateScriptCompiler
             {
                 string statementString = "";
 
-                while (_expression[_index].ToString() != " ")
+                while (_expression[_index].ToString() != " " && _expression[_index] != ';')
                 {
                     statementString += _expression[_index];
                     _index++;
@@ -93,6 +97,39 @@ namespace SenateScriptCompiler
                 return;
             }
 
+            //Checks if current index is a mathmematical operator
+            switch (_expression[_index])
+            {
+                case '+':
+                    CurrentToken = Token.Plus;
+                    _index++;
+                    return;
+                case '-':
+                    CurrentToken = Token.Minus;
+                    _index++;
+                    return;
+                case '/':
+                    CurrentToken = Token.Divide;
+                    _index++;
+                    return;
+                case '*':
+                    CurrentToken = Token.Multiply;
+                    _index++;
+                    return;
+                case '(':
+                    CurrentToken = Token.OpenBracket;
+                    _index++;
+                    return;
+                case ')':
+                    CurrentToken = Token.CloseBracket;
+                    _index++;
+                    return;
+                case '!':
+                    CurrentToken = Token.Not;
+                    _index++;
+                    return;
+            }
+
             //Checks if current index of expression is start of variable name
             if (LexerHelper.IsStartOfVariableName(_expression[_index]))
             {
@@ -103,7 +140,7 @@ namespace SenateScriptCompiler
                     variableName += _expression[_index];
                     _index++;
                 }
-
+                
                 CurrentToken = Token.VariableName;
                 VariableName = variableName;
 
@@ -133,35 +170,6 @@ namespace SenateScriptCompiler
                 NumberValue = Double.Parse(number);
 
                 return;
-            }
-
-            //Checks if current index is a mathmematical operator
-            switch (_expression[_index])
-            {
-                case '+':
-                    CurrentToken = Token.Plus;
-                    _index++;
-                    return;
-                case '-':
-                    CurrentToken = Token.Minus;
-                    _index++;
-                    return;
-                case '/':
-                    CurrentToken = Token.Divide;
-                    _index++;
-                    return;
-                case '*':
-                    CurrentToken = Token.Multiply;
-                    _index++;
-                    return;
-                case '(':
-                    CurrentToken = Token.OpenBracket;
-                    _index++;
-                    return;
-                case ')':
-                    CurrentToken = Token.CloseBracket;
-                    _index++;
-                    return;
             }
 
             //Checks if current index is semi colon
