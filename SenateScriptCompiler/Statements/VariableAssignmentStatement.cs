@@ -22,10 +22,10 @@ namespace SenateScriptCompiler.Statements
 
             _symbol = _expression.Evaluate();
 
-            if (SymbolTable.Get(_variableName).Type != _symbol.Type)
-                throw new Exception("Cannot assign type " + _symbol.Type + " to type " + SymbolTable.Get(_variableName).Type);
+            if (GlobalSymbolTable.table.Get(_variableName).Type != _symbol.Type)
+                throw new Exception("Cannot assign type " + _symbol.Type + " to type " + GlobalSymbolTable.table.Get(_variableName).Type);
 
-            SymbolTable.Assign(_variableName, _symbol);
+            GlobalSymbolTable.table.Assign(_variableName, _symbol);
 
             return true;
         }

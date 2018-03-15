@@ -22,7 +22,7 @@ namespace SenateScriptCompiler.Statements
 
         public override bool Execute()
         {
-            SymbolTable.Add(_variableName, _symbol);
+            GlobalSymbolTable.table.Add(_variableName, _symbol);
             
             return true;
         }

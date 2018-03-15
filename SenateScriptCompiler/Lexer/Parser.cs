@@ -130,10 +130,12 @@ namespace SenateScriptCompiler
                     }
                 }
 
-                if (CurrentToken == Token.VariableName && (LastToken != Token.BoolVariable || LastToken != Token.StringVariable || LastToken != Token.NumberVariable))
+                
+                if (CurrentToken == Token.VariableName && (LastToken != Token.BoolVariable && LastToken != Token.StringVariable && LastToken != Token.NumberVariable))
                 {
                     throw new Exception("Variable does not exists in scope");
                 }
+                
 
             }
 

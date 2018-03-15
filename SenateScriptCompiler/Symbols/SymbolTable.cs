@@ -5,16 +5,16 @@ using System.Text;
 
 namespace SenateScriptCompiler
 {
-    static class SymbolTable
+    class SymbolTable
     {
-        private static Hashtable table;
+        private Hashtable table;
 
-        static SymbolTable()
+        public SymbolTable()
         {
             table = new Hashtable();
         }
 
-        public static bool Add(string variableName, Symbol symbol)
+        public bool Add(string variableName, Symbol symbol)
         {
             if (table.ContainsKey(variableName))
                 throw new Exception("Variable already exists!");
@@ -23,7 +23,7 @@ namespace SenateScriptCompiler
             return true;
         }
 
-        public static Symbol Get(string variableName)
+        public Symbol Get(string variableName)
         {
             if (!table.ContainsKey(variableName))
                 throw new Exception("Variable does not exist in current context!");
@@ -31,7 +31,7 @@ namespace SenateScriptCompiler
             return table[variableName] as Symbol;
         }
 
-        public static bool Assign(string variableName, Symbol symbol)
+        public bool Assign(string variableName, Symbol symbol)
         {
             if (!table.ContainsKey(variableName))
                 throw new Exception("Variable does not exist in current context!");

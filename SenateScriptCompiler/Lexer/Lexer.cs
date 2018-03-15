@@ -99,7 +99,7 @@ namespace SenateScriptCompiler
                 return;
             }
 
-            //Checks if current index is a mathmematical operator
+            //Checks if current index is a single char token
             switch (_expression[_index])
             {
                 case '+':
@@ -130,6 +130,14 @@ namespace SenateScriptCompiler
                     CurrentToken = Token.Not;
                     _index++;
                     return;
+                case '=':
+                    CurrentToken = Token.VariableAssignment;
+                    _index++;
+                    return;
+                case ';':
+                    CurrentToken = Token.Semi;
+                    _index++;
+                    return;
             }
 
             //Checks if current index of expression is start of variable name
@@ -137,8 +145,10 @@ namespace SenateScriptCompiler
             {
                 string variableName = "";
 
+                string[] charactersToIgnore = { " ", ";", ")", "+", "!", "(", "-", "*", "/" };
+
                 //Add token blacklist e.g. +, ), (
-                while (_expression[_index].ToString() !=  " " && _expression[_index].ToString() != ";" && _expression[_index] != ')')
+                while (!charactersToIgnore.Contains(_expression[_index].ToString()))
                 {
                     variableName += _expression[_index];
                     _index++;
@@ -147,13 +157,6 @@ namespace SenateScriptCompiler
                 CurrentToken = Token.VariableName;
                 VariableName = variableName;
 
-                return;
-            }
-
-            if (_expression[_index] == '=')
-            {
-                CurrentToken = Token.VariableAssignment;
-                _index++;
                 return;
             }
 
@@ -171,14 +174,6 @@ namespace SenateScriptCompiler
                 CurrentToken = Token.Number;
                 NumberValue = Double.Parse(number);
 
-                return;
-            }
-
-            //Checks if current index is semi colon
-            if (_expression[_index] == ';')
-            {
-                CurrentToken = Token.Semi;
-                _index++;
                 return;
             }
         }
