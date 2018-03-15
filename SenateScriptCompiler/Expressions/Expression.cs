@@ -6,6 +6,6 @@ namespace SenateScriptCompiler.Expressions
 {
     abstract class Expression
     {
-        public abstract Symbol Evaluate();
+        public abstract GeneralSymbol Evaluate();
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using SenateScriptCompiler.Enums;
 using SenateScriptCompiler.Expressions;
 using SenateScriptCompiler.Statements;
+using Type = SenateScriptCompiler.Enums.Type;
 
 namespace SenateScriptCompiler
 {
@@ -22,92 +23,85 @@ namespace SenateScriptCompiler
         {
             DateTime startTime = DateTime.Now;
 
+            while (CurrentToken != Token.EndFile)
+            {
+                _statements.Add(Parse());
+            }
+
             //Executes every statement in sequence
             foreach (Statement statement in _statements)
             {
-                statement.Execute();
+                statement?.Execute();
             }
 
             Console.WriteLine();
             Console.WriteLine("Time taken to execute: " + (DateTime.Now - startTime));
         }
 
-        public bool Parse()
+        public Statement Parse()
         {
             DateTime startTime = DateTime.Now;
 
-            //Loops until it reaches the end of the file
-            while (CurrentToken != Token.EndFile)
+            GetNextToken();
+
+
+            //Array containing all accepted tokens by the print statement
+            Token[] acceptedPrintTokens = new[]
+            {
+                Token.String,
+                Token.BoolTrue,
+                Token.BoolFalse,
+                Token.Number,
+                Token.VariableName,
+                Token.Not,
+                Token.Minus
+            };
+
+            //PRINT statement check/parse
+            if (LastToken == Token.Print && acceptedPrintTokens.Contains(CurrentToken))
+            {
+                return new PrintStatement(EvaluateExpression());
+            }
+
+            
+            //FUNCTION definition statement check/parse
+            if (LastToken == Token.FunctionDef && CurrentToken == Token.FunctionName)
+            {
+                List<Statement> statements = new List<Statement>();
+                List<Argument> arguments = new List<Argument>();
+
+                while (CurrentToken != Token.OpenBrace)
+                {
+                    GetNextToken();
+                    if (LastToken == Token.Argument && (CurrentToken == Token.BoolVariable || CurrentToken == Token.NumberVariable || CurrentToken == Token.StringVariable)
+                    {
+
+                    }
+                    {
+                        GetNextToken();
+                        if (CurrentToken)
+                    }
+                }
+                if (CurrentToken == Token.OpenBrace)
+                {
+                    GetNextToken();
+                    while (CurrentToken != Token.CloseBrace)
+                    {
+                        statements.Add(Parse());
+                    }
+
+                    FunctionDefinitionStatement function = new FunctionDefinitionStatement(statements);
+                }
+
+            }
+            
+
+            //Checks for variable decleration
+            if (CurrentToken == Token.NumberVariable || CurrentToken == Token.StringVariable || CurrentToken == Token.BoolVariable)
             {
                 GetNextToken();
 
-
-                //Array containing all accepted tokens by the print statement
-                Token[] acceptedPrintTokens = new[]
-                {
-                    Token.String,
-                    Token.BoolTrue,
-                    Token.BoolFalse,
-                    Token.Number,
-                    Token.VariableName,
-                    Token.Not,
-                    Token.Minus
-                };
-
-                //PRINT statement check/parse
-                if (LastToken == Token.Print && LastToken != CurrentToken && acceptedPrintTokens.Contains(CurrentToken))
-                {
-                    _statements.Add(new PrintStatement(EvaluateExpression()));
-
-                    if (CurrentToken != Token.Semi)
-                    {
-                        throw new Exception("Expecting a ;");
-                    }
-                }
-
-                //Checks for variable decleration
-                if (CurrentToken == Token.NumberVariable || CurrentToken == Token.StringVariable || CurrentToken == Token.BoolVariable)
-                {
-                    GetNextToken();
-
-                    if (CurrentToken == Token.VariableName)
-                    {
-                        GetNextToken();
-
-                        if (CurrentToken == Token.VariableAssignment)
-                        {
-                            GetNextToken();
-
-                            if (CurrentToken == Token.String || CurrentToken == Token.Number || CurrentToken == Token.BoolFalse || CurrentToken == Token.BoolTrue || CurrentToken == Token.Minus)
-                            {
-                                //Finds the type of variable which is being declared
-                                Enums.Type type = Enums.Type.Null;
-
-                                Dictionary<Token, Enums.Type> tokenConversion = new Dictionary<Token, Enums.Type>
-                                {
-                                    { Token.StringVariable, Enums.Type.String },
-                                    { Token.NumberVariable, Enums.Type.Number },
-                                    { Token.BoolVariable, Enums.Type.Bool }
-                                };
-
-                                type = tokenConversion[ThirdLastToken];
-
-                                _statements.Add(new VariableDeclerationStatement(type, VariableName, EvaluateExpression()));
-                            }
-                            else
-                            {
-                                throw new Exception("Unknown type");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("Invalid variable name");
-                    }
-                }
-
-                //Checks for variable assignment
-                if (CurrentToken == Token.VariableName && LastToken == Token.Semi)
+                if (CurrentToken == Token.VariableName)
                 {
                     GetNextToken();
 
@@ -115,32 +109,68 @@ namespace SenateScriptCompiler
                     {
                         GetNextToken();
 
-                        if (CurrentToken == Token.String || CurrentToken == Token.Number || CurrentToken == Token.BoolTrue || CurrentToken == Token.BoolFalse || CurrentToken == Token.Not || CurrentToken == Token.VariableName)
+                        if (CurrentToken == Token.String || CurrentToken == Token.Number || CurrentToken == Token.BoolFalse || CurrentToken == Token.BoolTrue || CurrentToken == Token.Minus)
                         {
-                            _statements.Add(new VariableAssignmentStatement(VariableName, EvaluateExpression()));
+                            //Finds the type of variable which is being declared
+                            Enums.Type type = Enums.Type.Null;
+
+                            Dictionary<Token, Enums.Type> tokenConversion = new Dictionary<Token, Enums.Type>
+                            {
+                                { Token.StringVariable, Enums.Type.String },
+                                { Token.NumberVariable, Enums.Type.Number },
+                                { Token.BoolVariable, Enums.Type.Bool }
+                            };
+
+                            type = tokenConversion[ThirdLastToken];
+
+                            return new VariableDeclerationStatement(type, VariableName, EvaluateExpression());
                         }
                         else
                         {
                             throw new Exception("Unknown type");
                         }
                     }
-                    else
-                    {
-                        throw new Exception("Missing = after variable name");
-                    }
                 }
-
-                
-                if (CurrentToken == Token.VariableName && (LastToken != Token.BoolVariable && LastToken != Token.StringVariable && LastToken != Token.NumberVariable))
+                else
                 {
-                    throw new Exception("Variable does not exists in scope");
+                    throw new Exception("Invalid variable name");
                 }
-                
-
             }
 
-            Console.WriteLine("Time taken to compile: " + (DateTime.Now - startTime) + "\n");
-            return true;
+            //Checks for variable assignment
+            if (CurrentToken == Token.VariableName && LastToken == Token.Semi)
+            {
+                GetNextToken();
+
+                if (CurrentToken == Token.VariableAssignment)
+                {
+                    GetNextToken();
+
+                    if (CurrentToken == Token.String || CurrentToken == Token.Number || CurrentToken == Token.BoolTrue || CurrentToken == Token.BoolFalse || CurrentToken == Token.Not || CurrentToken == Token.VariableName)
+                    {
+                        return new VariableAssignmentStatement(VariableName, EvaluateExpression());
+                    }
+                    else
+                    {
+                        throw new Exception("Unknown type");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Missing = after variable name");
+                }
+            }
+
+                
+            if (CurrentToken == Token.VariableName && (LastToken != Token.BoolVariable && LastToken != Token.StringVariable && LastToken != Token.NumberVariable))
+            {
+                throw new Exception("Variable does not exists in scope");
+            }
+                
+
+
+            //Console.WriteLine("Time taken to compile: " + (DateTime.Now - startTime) + "\n");
+            return null;
         }
 
         public Expression EvaluateExpression()

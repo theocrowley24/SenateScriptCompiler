@@ -19,93 +19,93 @@ namespace SenateScriptCompiler.Expressions
             _operator = op;
         }
 
-        public override Symbol Evaluate()
+        public override GeneralSymbol Evaluate()
         {
             
             if (_expression1.Evaluate().Type != _expression2.Evaluate().Type)
                 throw new Exception("Type mismatch!");
 
-            Symbol symbol = new Symbol();
+            GeneralSymbol variableSymbol = new GeneralSymbol();
 
             switch (_operator)
             {
                 case Operator.Plus:
                     if (_expression1.Evaluate().Type == Type.Number)
                     {
-                        symbol.Type = Type.Number;
-                        symbol.NumberValue = _expression1.Evaluate().NumberValue + _expression2.Evaluate().NumberValue;
+                        variableSymbol.Type = Type.Number;
+                        variableSymbol.NumberValue = _expression1.Evaluate().NumberValue + _expression2.Evaluate().NumberValue;
                     } else if (_expression1.Evaluate().Type == Type.String)
                     {
-                        symbol.Type = Type.String;
-                        symbol.StringValue = _expression1.Evaluate().StringValue + _expression2.Evaluate().StringValue;
+                        variableSymbol.Type = Type.String;
+                        variableSymbol.StringValue = _expression1.Evaluate().StringValue + _expression2.Evaluate().StringValue;
                     }
                     else
                     {
                         throw new Exception("Incorrect type");
                     }
 
-                    return symbol;
+                    return variableSymbol;
                 case Operator.Minus:
                     if (_expression1.Evaluate().Type == Type.Number)
                     {
-                        symbol.Type = Type.Number;
-                        symbol.NumberValue = _expression1.Evaluate().NumberValue - _expression2.Evaluate().NumberValue;
+                        variableSymbol.Type = Type.Number;
+                        variableSymbol.NumberValue = _expression1.Evaluate().NumberValue - _expression2.Evaluate().NumberValue;
                     }
                     else
                     {
                         throw new Exception("Incorrect type");
                     }
 
-                    return symbol;
+                    return variableSymbol;
                 case Operator.Multiply:
                     if (_expression1.Evaluate().Type == Type.Number)
                     {
-                        symbol.Type = Type.Number;
-                        symbol.NumberValue = _expression1.Evaluate().NumberValue * _expression2.Evaluate().NumberValue;
+                        variableSymbol.Type = Type.Number;
+                        variableSymbol.NumberValue = _expression1.Evaluate().NumberValue * _expression2.Evaluate().NumberValue;
                     }
                     else
                     {
                         throw new Exception("Incorrect type");
                     }
 
-                    return symbol;
+                    return variableSymbol;
                 case Operator.Divide:
                     if (_expression1.Evaluate().Type == Type.Number)
                     {
-                        symbol.Type = Type.Number;
-                        symbol.NumberValue = _expression1.Evaluate().NumberValue / _expression2.Evaluate().NumberValue;
+                        variableSymbol.Type = Type.Number;
+                        variableSymbol.NumberValue = _expression1.Evaluate().NumberValue / _expression2.Evaluate().NumberValue;
                     }
                     else
                     {
                         throw new Exception("Incorrect type");
                     }
 
-                    return symbol;
+                    return variableSymbol;
 
                 case Operator.And:
                     if (_expression1.Evaluate().Type == Type.Bool)
                     {
-                        symbol.Type = Type.Bool;
-                        symbol.BoolValue = _expression1.Evaluate().BoolValue && _expression2.Evaluate().BoolValue;
+                        variableSymbol.Type = Type.Bool;
+                        variableSymbol.BoolValue = _expression1.Evaluate().BoolValue && _expression2.Evaluate().BoolValue;
                     }
                     else
                     {
                         throw new Exception("Incorrect type");
                     }
 
-                    return symbol;
+                    return variableSymbol;
                 case Operator.Or:
                     if (_expression1.Evaluate().Type == Type.Bool)
                     {
-                        symbol.Type = Type.Bool;
-                        symbol.BoolValue = _expression1.Evaluate().BoolValue || _expression2.Evaluate().BoolValue;
+                        variableSymbol.Type = Type.Bool;
+                        variableSymbol.BoolValue = _expression1.Evaluate().BoolValue || _expression2.Evaluate().BoolValue;
                     }
                     else
                     {
                         throw new Exception("Incorrect type");
                     }
 
-                    return symbol;
+                    return variableSymbol;
 
             }
 

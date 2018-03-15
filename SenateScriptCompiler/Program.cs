@@ -15,8 +15,6 @@ namespace SenateScriptCompiler
             Console.WriteLine("<------------------------->\n");
 
             Parser parser = new Parser(code);
-
-            parser.Parse();
             parser.Run();
         }
     }

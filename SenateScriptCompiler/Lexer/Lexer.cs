@@ -20,6 +20,7 @@ namespace SenateScriptCompiler
         protected String StringValue;
         protected Double NumberValue;
         protected String VariableName;
+        protected String FunctionName;
 
         private readonly Dictionary<Token, String> _tokenValues;
 
@@ -28,6 +29,8 @@ namespace SenateScriptCompiler
             _expression = expression;
             _length = expression.Length;
             _index = 0;
+
+            LexerHelper.LineNumber = 1;
 
             _tokenValues = new Dictionary<Token, string>
             {
@@ -39,7 +42,10 @@ namespace SenateScriptCompiler
                 { Token.BoolTrue, "TRUE" },
                 { Token.BoolFalse, "FALSE" },
                 { Token.And, "AND" },
-                { Token.Or, "OR" }
+                { Token.Or, "OR" },
+                { Token.FunctionDef, "FUNC" },
+                { Token.FunctionCall, "CALL" },
+                { Token.Argument, "ARG" }
             };
         }
 
@@ -52,6 +58,10 @@ namespace SenateScriptCompiler
             //Skips whitespace in expression
             while (_index < _length && (_expression[_index].ToString() == " " || _expression[_index] == '\t' || _expression[_index] == '\r' || _expression[_index] == '\n'))
             {
+
+                if (_expression[_index] == '\n')
+                    LexerHelper.LineNumber++;
+
                 _index++;
             }
 
@@ -138,6 +148,14 @@ namespace SenateScriptCompiler
                     CurrentToken = Token.Semi;
                     _index++;
                     return;
+                case '{':
+                    CurrentToken = Token.OpenBrace;
+                    _index++;
+                    return;
+                case '}':
+                    CurrentToken = Token.CloseBrace;
+                    _index++;
+                    return;
             }
 
             //Checks if current index of expression is start of variable name
@@ -147,7 +165,7 @@ namespace SenateScriptCompiler
 
                 string[] charactersToIgnore = { " ", ";", ")", "+", "!", "(", "-", "*", "/" };
 
-                //Add token blacklist e.g. +, ), (
+                //AddToVariableTable token blacklist e.g. +, ), (
                 while (!charactersToIgnore.Contains(_expression[_index].ToString()))
                 {
                     variableName += _expression[_index];
@@ -156,6 +174,26 @@ namespace SenateScriptCompiler
 
                 CurrentToken = Token.VariableName;
                 VariableName = variableName;
+
+                return;
+            }
+
+            //Checks if current inde of expression is start of function name
+            if (_expression[_index] == '£')
+            {
+                string functionName = "";
+
+                string[] charactersToIgnore = { " ", ";", ")", "+", "!", "(", "-", "*", "/" };
+
+                //AddToVariableTable token blacklist e.g. +, ), (
+                while (!charactersToIgnore.Contains(_expression[_index].ToString()))
+                {
+                    functionName += _expression[_index];
+                    _index++;
+                }
+
+                CurrentToken = Token.FunctionName;
+                FunctionName = functionName;
 
                 return;
             }

@@ -16,7 +16,7 @@ namespace SenateScriptCompiler.Expressions
             _operator = op;
         }
 
-        public override Symbol Evaluate()
+        public override GeneralSymbol Evaluate()
         {
             switch (_operator)
             {
@@ -27,15 +27,15 @@ namespace SenateScriptCompiler.Expressions
                 case Operator.Minus:
                     if (_expression.Evaluate().Type != Enums.Type.Number)
                         throw new Exception("Incorrect type");
-                    Symbol symbolMinus = _expression.Evaluate();
-                    symbolMinus.Minus();
-                    return symbolMinus;
+                    GeneralSymbol variableSymbolMinus = _expression.Evaluate();
+                    variableSymbolMinus.Minus();
+                    return variableSymbolMinus;
                 case Operator.Not:
                     if (_expression.Evaluate().Type != Enums.Type.Bool)
-                        throw new Exception("Incorrect type");
-                    Symbol symbolNot = _expression.Evaluate();
-                    symbolNot.Not();
-                    return symbolNot;
+                        throw new Exception("! cannot be applied to type " + _expression.Evaluate().Type);
+                    GeneralSymbol variableSymbolNot = _expression.Evaluate();
+                    variableSymbolNot.Not();
+                    return variableSymbolNot;
 
             }
 

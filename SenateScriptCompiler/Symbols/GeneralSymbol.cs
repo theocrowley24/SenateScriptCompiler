@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SenateScriptCompiler
 {
-    class Symbol
+    class GeneralSymbol
     {
         public Enums.Type Type;
         public String StringValue;

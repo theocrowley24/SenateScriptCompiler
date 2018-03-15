@@ -8,7 +8,7 @@ namespace SenateScriptCompiler.Statements
     class VariableAssignmentStatement : Statement
     {
         private readonly Expression _expression;
-        private Symbol _symbol;
+        private GeneralSymbol _variableSymbol;
         private readonly String _variableName;
 
         public VariableAssignmentStatement(string variableName, Expression value)
@@ -20,12 +20,12 @@ namespace SenateScriptCompiler.Statements
         public override bool Execute()
         {
 
-            _symbol = _expression.Evaluate();
+            _variableSymbol = _expression.Evaluate();
 
-            if (GlobalSymbolTable.table.Get(_variableName).Type != _symbol.Type)
-                throw new Exception("Cannot assign type " + _symbol.Type + " to type " + GlobalSymbolTable.table.Get(_variableName).Type);
+            if (GlobalSymbolTable.table.GetVariableSymbol(_variableName).Type != _variableSymbol.Type)
+                throw new Exception("Cannot assign type " + _variableSymbol.Type + " to type " + GlobalSymbolTable.table.GetVariableSymbol(_variableName).Type);
 
-            GlobalSymbolTable.table.Assign(_variableName, _symbol);
+            GlobalSymbolTable.table.AssignVariable(_variableName, _variableSymbol);
 
             return true;
         }

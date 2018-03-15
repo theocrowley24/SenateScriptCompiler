@@ -13,9 +13,9 @@ namespace SenateScriptCompiler.Expressions
             _variableName = variableName;
         }
 
-        public override Symbol Evaluate()
+        public override GeneralSymbol Evaluate()
         {
-            return GlobalSymbolTable.table.Get(_variableName);
+            return GlobalSymbolTable.table.GetVariableSymbol(_variableName);
         }
 
     }

@@ -7,22 +7,31 @@ namespace SenateScriptCompiler.Statements
 {
     class VariableDeclerationStatement : Statement
     {
-        private readonly Symbol _symbol;
+        private readonly GeneralSymbol _variableSymbol;
         private readonly String _variableName;
 
         public VariableDeclerationStatement(Enums.Type type, string variableName, Expression value)
         {
 
-            _symbol = value.Evaluate();
+            _variableSymbol = value.Evaluate();
             _variableName = variableName;
 
-            if (_symbol.Type != type)
-                throw new Exception("Cannot declare type " + _symbol.Type.ToString() + " as " + type);
+            if (_variableSymbol.Type != type)
+                throw new Exception("Cannot declare type " + _variableSymbol.Type.ToString() + " as " + type);
+        }
+
+        public VariableDeclerationStatement(Enums.Type type, string variableName, GeneralSymbol symbol)
+        {
+            _variableSymbol = symbol;
+            _variableName = variableName;
+
+            if (_variableSymbol.Type != type)
+                throw new Exception("Cannot declare type " + _variableSymbol.Type.ToString() + " as " + type);
         }
 
         public override bool Execute()
         {
-            GlobalSymbolTable.table.Add(_variableName, _symbol);
+            GlobalSymbolTable.table.AddToVariableTable(_variableName, _variableSymbol);
             
             return true;
         }

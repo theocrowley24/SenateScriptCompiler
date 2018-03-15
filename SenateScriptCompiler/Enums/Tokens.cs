@@ -27,6 +27,13 @@ namespace SenateScriptCompiler
         VariableName,
         And,
         Or,
-        Not
+        Not,
+        FunctionDef,
+        FunctionCall,
+        OpenBrace,
+        CloseBrace,
+        Argument,
+        ArgumentName,
+        FunctionName
     }
 }

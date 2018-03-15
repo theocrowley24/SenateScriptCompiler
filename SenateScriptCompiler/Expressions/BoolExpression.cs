@@ -7,20 +7,20 @@ namespace SenateScriptCompiler.Expressions
     class BoolExpression : Expression
     {
 
-        private Symbol _symbol;
+        private GeneralSymbol _variableSymbol;
 
         public BoolExpression(bool value)
         {
-            _symbol = new Symbol
+            _variableSymbol = new GeneralSymbol
             {
                 Type = Enums.Type.Bool,
                 BoolValue = value
             };
         }
 
-        public override Symbol Evaluate()
+        public override GeneralSymbol Evaluate()
         {
-            return _symbol;
+            return _variableSymbol;
         }
 
     }

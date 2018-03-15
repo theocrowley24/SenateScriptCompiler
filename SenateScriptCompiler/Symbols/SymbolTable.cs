@@ -1,42 +1,59 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 
-namespace SenateScriptCompiler
+namespace SenateScriptCompiler.Symbols
 {
     class SymbolTable
     {
-        private Hashtable table;
+        private readonly Hashtable _variableTable;
+        private readonly Hashtable _functionTable;
 
         public SymbolTable()
         {
-            table = new Hashtable();
+            _variableTable = new Hashtable();
+            _functionTable = new Hashtable();
         }
 
-        public bool Add(string variableName, Symbol symbol)
+        public bool AddToVariableTable(string variableName, GeneralSymbol variableSymbol)
         {
-            if (table.ContainsKey(variableName))
+            if (_variableTable.ContainsKey(variableName))
                 throw new Exception("Variable already exists!");
 
-            table.Add(variableName, symbol);
+            _variableTable.Add(variableName, variableSymbol);
             return true;
         }
 
-        public Symbol Get(string variableName)
+        public bool AddToFunctionTable(string functionName, FunctionSymbol functionSymbol)
         {
-            if (!table.ContainsKey(variableName))
-                throw new Exception("Variable does not exist in current context!");
+            if (_functionTable.ContainsKey(functionName))
+                throw new Exception("Function is already defined!");
 
-            return table[variableName] as Symbol;
+            _functionTable.Add(functionName, functionSymbol);
+            return true;
         }
 
-        public bool Assign(string variableName, Symbol symbol)
+        public GeneralSymbol GetVariableSymbol(string variableName)
         {
-            if (!table.ContainsKey(variableName))
+            if (!_variableTable.ContainsKey(variableName))
                 throw new Exception("Variable does not exist in current context!");
 
-            table[variableName] = symbol;
+            return _variableTable[variableName] as GeneralSymbol;
+        }
+
+        public FunctionSymbol GetFunctionSymbol(string functionName)
+        {
+            if (!_functionTable.ContainsKey(functionName))
+                throw new Exception("Function is not defined!");
+
+            return _functionTable[functionName] as FunctionSymbol;
+        }
+
+        public bool AssignVariable(string variableName, GeneralSymbol variableSymbol)
+        {
+            if (!_variableTable.ContainsKey(variableName))
+                throw new Exception("Variable does not exist in current context!");
+
+            _variableTable[variableName] = variableSymbol;
             return true;
         }
     }

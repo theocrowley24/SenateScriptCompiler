@@ -8,6 +8,8 @@ namespace SenateScriptCompiler.Helpers
 {
     class LexerHelper
     {
+        public static int LineNumber;
+
         public static bool IsStartOfStatement(char c)
         {
             char[] statementCharacters =

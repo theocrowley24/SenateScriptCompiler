@@ -7,20 +7,20 @@ namespace SenateScriptCompiler.Expressions
     class NumericalExpression : Expression
     {
 
-        private Symbol _symbol;
+        private GeneralSymbol _variableSymbol;
 
         public NumericalExpression(double value)
         {
-            _symbol = new Symbol
+            _variableSymbol = new GeneralSymbol
             {
                 Type = Enums.Type.Number,
                 NumberValue = value
             };
         }
 
-        public override Symbol Evaluate()
+        public override GeneralSymbol Evaluate()
         {
-            return _symbol;
+            return _variableSymbol;
         }
 
     }
