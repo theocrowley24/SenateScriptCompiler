@@ -70,18 +70,48 @@ namespace SenateScriptCompiler
                 List<Statement> statements = new List<Statement>();
                 List<Argument> arguments = new List<Argument>();
 
+                //Gets the arguments for the function
+                GetNextToken();
                 while (CurrentToken != Token.OpenBrace)
                 {
                     GetNextToken();
-                    if (LastToken == Token.Argument && (CurrentToken == Token.BoolVariable || CurrentToken == Token.NumberVariable || CurrentToken == Token.StringVariable)
-                    {
 
-                    }
+
+                    if (LastToken == Token.Argument && (CurrentToken == Token.BoolVariable || CurrentToken == Token.NumberVariable || CurrentToken == Token.StringVariable))
                     {
                         GetNextToken();
-                        if (CurrentToken)
+                        if (CurrentToken == Token.VariableName)
+                        {
+                            Argument argument = new Argument();
+                            argument.ArgumentName = VariableName;
+                            GeneralSymbol symbol = new GeneralSymbol();
+
+                            Dictionary<Token, Enums.Type> tokenConversion = new Dictionary<Token, Enums.Type>
+                            {
+                                { Token.StringVariable, Enums.Type.String },
+                                { Token.NumberVariable, Enums.Type.Number },
+                                { Token.BoolVariable, Enums.Type.Bool }
+                            };
+
+                            symbol.Type = tokenConversion[LastToken];
+                            argument.Value = symbol;
+
+                            arguments.Add(argument);
+
+                            GetNextToken();
+                        }
+                        else
+                        {
+                            throw new Exception("Expecting argument name!");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Expecting type after argument");
                     }
                 }
+
+                //Gets the statements for the function
                 if (CurrentToken == Token.OpenBrace)
                 {
                     GetNextToken();
@@ -90,11 +120,39 @@ namespace SenateScriptCompiler
                         statements.Add(Parse());
                     }
 
-                    FunctionDefinitionStatement function = new FunctionDefinitionStatement(statements);
+                    FunctionDefinitionStatement function = new FunctionDefinitionStatement(statements, arguments, FunctionName);
+                    _statements.Add(function);
                 }
 
             }
             
+            //Checks for function call
+            if (CurrentToken == Token.FunctionCall)
+            {
+                GetNextToken();
+                if (CurrentToken == Token.FunctionName)
+                {
+                    GetNextToken();
+
+                    List<Argument> arguments = new List<Argument>();
+
+                    while (CurrentToken != Token.Semi && CurrentToken != Token.EndFile)
+                    {
+                        if (CurrentToken == Token.String || CurrentToken == Token.Number ||
+                            CurrentToken == Token.BoolFalse || CurrentToken == Token.BoolTrue ||
+                            CurrentToken == Token.Minus || CurrentToken == Token.VariableName)
+                        {
+                            Argument argument = new Argument();
+                            argument.Value = EvaluateExpression().Evaluate();
+                            arguments.Add(argument);
+                        }
+
+                        GetNextToken();
+                    }
+
+                    return new FunctionCallStatement(FunctionName, arguments);
+                }
+            }
 
             //Checks for variable decleration
             if (CurrentToken == Token.NumberVariable || CurrentToken == Token.StringVariable || CurrentToken == Token.BoolVariable)
@@ -109,7 +167,7 @@ namespace SenateScriptCompiler
                     {
                         GetNextToken();
 
-                        if (CurrentToken == Token.String || CurrentToken == Token.Number || CurrentToken == Token.BoolFalse || CurrentToken == Token.BoolTrue || CurrentToken == Token.Minus)
+                        if (CurrentToken == Token.String || CurrentToken == Token.Number || CurrentToken == Token.BoolFalse || CurrentToken == Token.BoolTrue || CurrentToken == Token.Minus || CurrentToken == Token.VariableName)
                         {
                             //Finds the type of variable which is being declared
                             Enums.Type type = Enums.Type.Null;

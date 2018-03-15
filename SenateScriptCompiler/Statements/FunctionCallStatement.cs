@@ -38,7 +38,7 @@ namespace SenateScriptCompiler.Statements
             //Executes all function statements
             foreach (Statement statement in functionSymbol.Statements)
             {
-                statement.Execute();
+                statement?.Execute();
             }
 
             return true;

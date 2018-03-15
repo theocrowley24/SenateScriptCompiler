@@ -34,6 +34,7 @@ namespace SenateScriptCompiler
         CloseBrace,
         Argument,
         ArgumentName,
-        FunctionName
+        FunctionName,
+        Comma
     }
 }

@@ -23,6 +23,7 @@ namespace SenateScriptCompiler
         protected String FunctionName;
 
         private readonly Dictionary<Token, String> _tokenValues;
+        private readonly Dictionary<Token, char> _singleCharValues;
 
         public Lexer(String expression)
         {
@@ -45,7 +46,33 @@ namespace SenateScriptCompiler
                 { Token.Or, "OR" },
                 { Token.FunctionDef, "FUNC" },
                 { Token.FunctionCall, "CALL" },
-                { Token.Argument, "ARG" }
+                { Token.Argument, "ARG" },
+                { Token.Plus, "+" },
+                { Token.Minus, "-" },
+                { Token.Divide, "/" },
+                { Token.Multiply, "*" },
+                { Token.OpenBracket, "(" },
+                { Token.CloseBracket, ")" },
+                { Token.Not, "!" },
+                { Token.VariableAssignment, "=" },
+                { Token.OpenBrace, "{" },
+                { Token.CloseBrace, "}" },
+                { Token.Comma, "," }
+            };
+
+            _singleCharValues = new Dictionary<Token, char>
+            {
+                { Token.Plus, '+' },
+                { Token.Minus, '-' },
+                { Token.Divide, '/' },
+                { Token.Multiply, '*' },
+                { Token.OpenBracket, '(' },
+                { Token.CloseBracket, ')' },
+                { Token.Not, '!' },
+                { Token.VariableAssignment, '=' },
+                { Token.OpenBrace, '{' },
+                { Token.CloseBrace, '}' },
+                { Token.Comma, ',' }
             };
         }
 
@@ -65,6 +92,7 @@ namespace SenateScriptCompiler
                 _index++;
             }
 
+
             if (_index == _length)
             {
                 CurrentToken = Token.EndFile;
@@ -76,7 +104,7 @@ namespace SenateScriptCompiler
             {
                 string statementString = "";
 
-                while (_expression[_index].ToString() != " " && _expression[_index] != ';')
+                while (_expression[_index].ToString() != " " && _expression[_index] != ';' && _expression[_index] != ',')
                 {
                     statementString += _expression[_index];
                     _index++;
@@ -110,6 +138,17 @@ namespace SenateScriptCompiler
             }
 
             //Checks if current index is a single char token
+
+            /*
+            if (_singleCharValues.Any(x => x.Value == _expression[_index]))
+            {
+                CurrentToken = _singleCharValues.First(x => x.Value == _expression[_index]).Key;
+                _index++;
+                return;
+            }
+            */
+
+            
             switch (_expression[_index])
             {
                 case '+':
@@ -156,16 +195,20 @@ namespace SenateScriptCompiler
                     CurrentToken = Token.CloseBrace;
                     _index++;
                     return;
+                case ',':
+                    CurrentToken = Token.Comma;
+                    _index++;
+                    return;
             }
+            
 
             //Checks if current index of expression is start of variable name
             if (_expression[_index] == '$')
             {
                 string variableName = "";
 
-                string[] charactersToIgnore = { " ", ";", ")", "+", "!", "(", "-", "*", "/" };
+                string[] charactersToIgnore = { " ", ";", ")", "+", "!", "(", "-", "*", "/", "{", "\r", "\n" };
 
-                //AddToVariableTable token blacklist e.g. +, ), (
                 while (!charactersToIgnore.Contains(_expression[_index].ToString()))
                 {
                     variableName += _expression[_index];
@@ -179,13 +222,12 @@ namespace SenateScriptCompiler
             }
 
             //Checks if current inde of expression is start of function name
-            if (_expression[_index] == '£')
+            if (_expression[_index] == '@')
             {
                 string functionName = "";
 
-                string[] charactersToIgnore = { " ", ";", ")", "+", "!", "(", "-", "*", "/" };
+                string[] charactersToIgnore = { " ", ";", ")", "+", "!", "(", "-", "*", "/", "\r", "\n" };
 
-                //AddToVariableTable token blacklist e.g. +, ), (
                 while (!charactersToIgnore.Contains(_expression[_index].ToString()))
                 {
                     functionName += _expression[_index];

@@ -21,6 +21,7 @@ namespace SenateScriptCompiler.Helpers
             return statementCharacters.Contains(c);
         }
 
+
         public static bool IsStartOfString(char c)
         {
             return c == '\"';
