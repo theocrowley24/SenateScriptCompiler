@@ -16,6 +16,11 @@ namespace SenateScriptCompiler.Statements
 
             _value = value;
             _variableName = variableName;
+
+            if (_value.Evaluate().Type != type)
+            {
+                throw new Exception("Cannot declare type " + _value.Evaluate().Type + " as " + type);
+            }
         }
 
         public VariableDeclerationStatement(Enums.Type type, string variableName, GeneralSymbol symbol)

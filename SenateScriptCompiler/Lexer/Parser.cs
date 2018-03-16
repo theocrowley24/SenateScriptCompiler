@@ -23,15 +23,22 @@ namespace SenateScriptCompiler
         {
             DateTime startTime = DateTime.Now;
 
+            Console.WriteLine();
+            Console.WriteLine("Time taken to compile: " + (DateTime.Now - startTime));
+
             while (CurrentToken != Token.EndFile)
             {
                 _statements.Add(Parse());
             }
 
+            startTime = DateTime.Now;
+
             //Executes every statement in sequence
             foreach (Statement statement in _statements)
             {
-                statement?.Execute();
+                //Variable decleration statements are executed when paresd, so they are ignored during run time
+                if (statement != null && statement.GetType() != typeof(VariableDeclerationStatement))
+                    statement?.Execute();
             }
 
             Console.WriteLine();
@@ -40,7 +47,6 @@ namespace SenateScriptCompiler
 
         public Statement Parse()
         {
-            DateTime startTime = DateTime.Now;
 
             GetNextToken();
 
@@ -181,7 +187,12 @@ namespace SenateScriptCompiler
 
                             type = tokenConversion[ThirdLastToken];
 
-                            return new VariableDeclerationStatement(type, VariableName, EvaluateExpression());
+                            VariableDeclerationStatement variableDecleration =
+                                new VariableDeclerationStatement(type, VariableName, EvaluateExpression());
+
+                            variableDecleration.Execute();
+
+                            return variableDecleration;
                         }
                         else
                         {
