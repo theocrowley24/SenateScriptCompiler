@@ -256,6 +256,8 @@ namespace SenateScriptCompiler
 
                 return;
             }
+
+            throw new Exception("Unidentifiable token detected");
         }
     }
 }
