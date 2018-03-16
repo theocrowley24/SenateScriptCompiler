@@ -21,14 +21,13 @@ namespace SenateScriptCompiler.Statements
             FunctionSymbol functionSymbol = GlobalSymbolTable.table.GetFunctionSymbol(_functionName);
 
             if (functionSymbol.Arguments.Count != _arguments.Count)
-                throw new Exception("Incorrect number of arguments passed to function");
+                throw new Exception("Incorrect number of arguments passed to function. Expecting " + functionSymbol.Arguments.Count + " passed " + _arguments.Count);
 
             //Checks that arguments passed to function are what the function is expecting
             for (int i = 0; i < _arguments.Count; i++)
             {
-                //Add more descriptive exception name
                 if (_arguments[i].Value.Type != functionSymbol.Arguments[i].Value.Type)
-                    throw new Exception("Incorrect type passed to function");
+                    throw new Exception("Incorrect type passed to function. Expecting " + functionSymbol.Arguments[i].Value.Type + " passed " + _arguments[i].Value.Type);
 
                 //Creates every argument as a variable for the function to use
                 VariableDeclerationStatement variable = new VariableDeclerationStatement(_arguments[i].Value.Type, functionSymbol.Arguments[i].ArgumentName, _arguments[i].Value);

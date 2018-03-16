@@ -207,7 +207,7 @@ namespace SenateScriptCompiler
             {
                 string variableName = "";
 
-                string[] charactersToIgnore = { " ", ";", ")", "+", "!", "(", "-", "*", "/", "{", "\r", "\n" };
+                string[] charactersToIgnore = { " ", ";", ")", "+", "!", "(", "-", "*", "/", "{", "\r", "\n", "," };
 
                 while (!charactersToIgnore.Contains(_expression[_index].ToString()))
                 {

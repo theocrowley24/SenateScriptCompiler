@@ -23,8 +23,7 @@ namespace SenateScriptCompiler
         {
             DateTime startTime = DateTime.Now;
 
-            Console.WriteLine();
-            Console.WriteLine("Time taken to compile: " + (DateTime.Now - startTime));
+            Console.WriteLine("Time taken to compile: " + (DateTime.Now - startTime) + "\n");
 
             while (CurrentToken != Token.EndFile)
             {
@@ -32,6 +31,8 @@ namespace SenateScriptCompiler
             }
 
             startTime = DateTime.Now;
+
+            Console.WriteLine("<-------- OUTPUT -------->\n");
 
             //Executes every statement in sequence
             foreach (Statement statement in _statements)
@@ -42,7 +43,10 @@ namespace SenateScriptCompiler
             }
 
             Console.WriteLine();
-            Console.WriteLine("Time taken to execute: " + (DateTime.Now - startTime));
+            Console.WriteLine("<------------------------>\n");
+
+            Console.WriteLine();
+            Console.WriteLine("Time taken to execute: " + (DateTime.Now - startTime) + "\n");
         }
 
         public Statement Parse()
